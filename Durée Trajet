@@ -1,0 +1,26 @@
+import urllib.request
+import os
+import hashlib
+
+def get_url(url, local=True, binaire=False):
+    """charge une url et crée une version dans un cache local.
+    Lors des requêtes suivantes, la verstion en cache est chargée
+    si local=True.
+    Pour des fichiers binaires (images), utiliser "binaire=True"."""
+    if not os.path.exists("url_cache"):
+        os.makedirs("url_cache/")
+    nom_fichier = "url_cache/"+hashlib.md5(url.encode("utf8")).hexdigest() + ".tmp"
+
+    if os.path.exists(nom_fichier) and local:
+        text = open(nom_fichier, "rb" if binaire else "r").read()
+    else:
+        fichier = open(nom_fichier, "wb" if binaire else "w")
+        text = urllib.request.urlopen(url).read()
+        if not binaire:
+            text = text.decode("utf8","ignore") + '\n'
+        fichier.write(text)
+        fichier.close()
+    return(text)
+    
+    
+def trajet(position1, position2):
